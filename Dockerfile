@@ -11,5 +11,5 @@ RUN apk add --no-cache curl bash && \
     npm install && \
     chmod +x app.js
 
-CMD ["npm", "start"]
+CMD ["node", "app.js"]
 USER 10008
