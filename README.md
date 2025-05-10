@@ -1,6 +1,7 @@
 
 
 # serverless-xhttp
+* 免费容器带端口的话要关闭tls，可以使用cloudflared端口回源实现ip优选
 * serverless-vless-xhttp，集成哪吒探针，v0或v1可选。
 * 哪吒v0的agent端口为{443,8443,2096,2087,2083,2053}其中之一时，自动开启--tls。
 
