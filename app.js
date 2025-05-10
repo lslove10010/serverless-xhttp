@@ -803,10 +803,18 @@ const server = http.createServer((req, res) => {
 
     // 根路径和订阅路径
     if (req.url === '/') {
-        res.writeHead(200, { 'Content-Type': 'text/plain' });
-        res.end('Hello, World\n');
+        const filePath = path.join(__dirname, 'public', 'html', 'index.html');
+        fs.readFile(filePath, (err, data) => {
+            if (err) {
+                res.writeHead(500, { 'Content-Type': 'text/plain' });
+                res.end('Internal Server Error\n');
+                return;
+            }
+            res.writeHead(200, { 'Content-Type': 'text/html' });
+            res.end(data);
+        });
         return;
-    } 
+    }
     
     if (req.url === `/${SUB_PATH}`) {
         const vlessURL = `vless://${UUID}@${IP}:443?encryption=none&security=tls&sni=${IP}&fp=chrome&allowInsecure=1&type=xhttp&host=${IP}&path=${SETTINGS.XPATH}&mode=packet-up#${NAME}-${ISP}`; 
