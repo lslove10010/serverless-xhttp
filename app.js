@@ -803,16 +803,20 @@ const server = http.createServer((req, res) => {
 
     // 根路径和订阅路径
     if (req.url === '/') {
-        const filePath = path.join(__dirname, 'public', 'html', 'index.html');
+        const filePath = path.join(__dirname, 'public', 'index.html');
+    
         fs.readFile(filePath, (err, data) => {
             if (err) {
+                console.error('Error reading index.html:', err);
                 res.writeHead(500, { 'Content-Type': 'text/plain' });
-                res.end('Internal Server Error\n');
+                res.end('Internal Server Error');
                 return;
             }
+    
             res.writeHead(200, { 'Content-Type': 'text/html' });
             res.end(data);
         });
+    
         return;
     }
     
