@@ -12,8 +12,8 @@ const NEZHA_SERVER = process.env.NEZHA_SERVER || '';       // 哪吒v1填写形�
 const NEZHA_PORT = process.env.NEZHA_PORT || '';           // 哪吒v1没有此变量，v0的agent端口为{443,8443,2096,2087,2083,2053}其中之一时开启tls
 const NEZHA_KEY = process.env.NEZHA_KEY || '';             // v1的NZ_CLIENT_SECRET或v0的agent端口  
 const AUTO_ACCESS = process.env.AUTO_ACCESS || false;      // 是否开启自动访问保活,false为关闭,true为开启,需同时填写DOMAIN变量
+const XPATH = process.env.XPATH || UUID.slice(0, 8);       // xhttp路径,自动获取uuid前8位
 const SUB_PATH = process.env.SUB_PATH || 'sub';            // 节点订阅路径
-const XPATH = process.env.XPATH || 'xhttp';                // xhttp路径
 const DOMAIN = process.env.DOMAIN || '';                   // 域名或ip,留空将自动获取服务器ip
 const NAME = process.env.NAME || 'Vls';                    // 节点名称
 const PORT = process.env.PORT || 8080;                     // http服务
@@ -139,6 +139,9 @@ const runnz = async () => {
       command = `nohup ./npm -s ${NEZHA_SERVER}:${NEZHA_PORT} -p ${NEZHA_KEY} ${NEZHA_TLS} >/dev/null 2>&1 &`;
     } else if (NEZHA_SERVER && NEZHA_KEY) {
       if (!NEZHA_PORT) {
+        const port = NEZHA_SERVER.includes(':') ? NEZHA_SERVER.split(':').pop() : '';
+        const tlsPorts = new Set(['443', '8443', '2096', '2087', '2083', '2053']);
+        const nezhatls = tlsPorts.has(port) ? 'true' : 'false';
         const configYaml = `
 client_secret: ${NEZHA_KEY}
 debug: false
@@ -155,7 +158,7 @@ server: ${NEZHA_SERVER}
 skip_connection_count: false
 skip_procs_count: false
 temperature: false
-tls: false
+tls: ${nezhatls}
 use_gitee_to_upgrade: false
 use_ipv6_country_code: false
 uuid: ${UUID}`;
@@ -944,7 +947,7 @@ server.listen(PORT, () => {
     runnz ();
     setTimeout(() => {
       delFiles();
-    }, 30000);
+    }, 300000);
     addAccessTask();
     console.log(`Server is running on port ${PORT}`);
     log('info', `=================================`);
